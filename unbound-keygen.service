@@ -1,0 +1,15 @@
+[Unit]
+Description=Unbound Control Key And Certificate Generator
+After=syslog.target 
+Before=unbound.service
+ConditionPathExists=!/var/lib/unbound/unbound_control.key
+
+[Service]
+Type=oneshot
+Group=unbound
+ExecStart=/usr/sbin/unbound-control-setup -d /var/lib/unbound/
+ExecStart=/sbin/restorecon /var/lib/unbound/*
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

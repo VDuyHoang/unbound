@@ -1,0 +1,19 @@
+[Unit]
+Description=Unbound validating, recursive, and caching DNS resolver
+Documentation=man:unbound(8) man:unbound.conf(5)
+After=syslog.target network.target
+After=unbound-keygen.service
+Wants=unbound-keygen.service
+Wants=unbound-anchor.timer
+Before=nss-lookup.target
+Wants=nss-lookup.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/sysconfig/unbound
+ExecStartPre=/usr/sbin/unbound-checkconf
+ExecStartPre=-/usr/sbin/unbound-anchor -a /var/lib/unbound/root.key -c /etc/unbound/icannbundle.pem
+ExecStart=/usr/sbin/unbound -d $UNBOUND_OPTIONS
+
+[Install]
+WantedBy=multi-user.target
